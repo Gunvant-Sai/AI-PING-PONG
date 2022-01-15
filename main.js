@@ -1,5 +1,6 @@
-
-/*created by prashant shukla */
+img = "";
+noseY = 0;
+pingY = 325;
 
 var paddle2 =10,paddle1=10;
 
@@ -23,13 +24,48 @@ var ball = {
 
 function setup(){
   var canvas =  createCanvas(700,600);
-  canvas.center();
+  canvas.parent("canvas");
+
+  video = createCapture(VIDEO);
+  video.size(700, 600);
+  
+  posenet= ml5.poseNet(video,modelLoaded);
+  posenet.on("pose",gotresults);
 }
 
+function gotresults(results)
+{
+  if(results.length >0)
+    {
+      noseY=results[0].pose.nose.y;
+      console.log("noseX="+noseX+"noseY="+noseY);
+    }
+}
+
+function modelLoaded ()
+{
+  console.log("Model Initialized");
+}
 
 function draw(){
 
- background(0); 
+  background("#D3D3D3");
+    if(noseY > 150)
+    {
+      if(pingY < 330)
+        {
+         pingY = pingY+1; 
+        }
+    }
+  
+  if(noseY < 150)
+    {
+      if(pingY > 0)
+        {
+         pingY = pingY-1; 
+        }
+    }
+  image(img,pingX, pingY, 40,70); 
 
  fill("black");
  stroke("black");
